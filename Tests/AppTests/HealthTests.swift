@@ -10,8 +10,8 @@ struct HealthTests {
         try await withApp { app in
             try await app.testing().test(.GET, "health") { res async throws in
                 #expect(res.status == .ok)
-                let body = try res.content.decode([String: String].self)
-                #expect(body["status"] == "ok")
+                let body = try res.content.decode(HealthBody.self)
+                #expect(body.status == "ok")
             }
         }
     }
@@ -21,9 +21,9 @@ struct HealthTests {
         try await withApp { app in
             try await app.testing().test(.GET, "health") { res async throws in
                 #expect(res.status == .ok)
-                let body = try res.content.decode([String: AnyCodable].self)
-                #expect(body["cachePoolTotal"] != nil)
-                #expect(body["cachePoolActive"] != nil)
+                let body = try res.content.decode(HealthBody.self)
+                #expect(body.cachePoolTotal >= 0)
+                #expect(body.cachePoolActive >= 0)
             }
         }
     }
@@ -63,6 +63,7 @@ struct HealthTests {
 private func withApp(_ closure: (Application) async throws -> Void) async throws {
     let app = try await Application.make(.testing)
     try configure(app)
+    try await app.startup()  // initialises the router so routes are reachable
     do {
         try await closure(app)
     } catch {
@@ -72,5 +73,9 @@ private func withApp(_ closure: (Application) async throws -> Void) async throws
     try await app.asyncShutdown()
 }
 
-/// Minimal Codable wrapper so we can decode arbitrary JSON values.
-private struct AnyCodable: Codable {}
+/// Mirrors the public HealthResponse struct for decoding in tests.
+private struct HealthBody: Decodable {
+    let status: String
+    let cachePoolTotal: Int
+    let cachePoolActive: Int
+}
