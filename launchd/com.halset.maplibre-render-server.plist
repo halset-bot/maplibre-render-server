@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+
+    <!-- Unique identifier for this daemon -->
+    <key>Label</key>
+    <string>com.halset.maplibre-render-server</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/local/bin/maplibre-render-server</string>
+    </array>
+
+    <!-- Run as a dedicated least-privilege system user (created by install.sh) -->
+    <key>UserName</key>
+    <string>_maplibre</string>
+    <key>GroupName</key>
+    <string>_maplibre</string>
+
+    <!-- Environment variables passed to the process -->
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>MBGL_RENDER_PATH</key>
+        <string>/usr/local/bin/mbgl-render</string>
+    </dict>
+
+    <!-- Start immediately when the plist is loaded, and on every reboot -->
+    <key>RunAtLoad</key>
+    <true/>
+
+    <!-- Restart automatically if the process exits for any reason -->
+    <key>KeepAlive</key>
+    <true/>
+
+    <!-- Log files — directory is owned by _maplibre (created by install.sh) -->
+    <key>StandardOutPath</key>
+    <string>/var/log/maplibre-render-server/stdout.log</string>
+    <key>StandardErrorPath</key>
+    <string>/var/log/maplibre-render-server/stderr.log</string>
+
+    <!-- Working directory -->
+    <key>WorkingDirectory</key>
+    <string>/var/log/maplibre-render-server</string>
+
+</dict>
+</plist>
