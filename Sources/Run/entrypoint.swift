@@ -1,4 +1,5 @@
 import Vapor
+import App
 
 @main
 struct Entrypoint {
